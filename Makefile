@@ -1,13 +1,17 @@
-all: greyscale.out
+all: greyscale
 
-test: greyscale.ppm
+test: greyscale23.ppm greyscale34.ppm
 
-greyscale.out: greyscale.c
-	gcc -o greyscale.out greyscale.c
+greyscale: greyscale.c
+	gcc -o greyscale greyscale.c
 
-greyscale.ppm: greyscale.out
-	./greyscale.out > greyscale.ppm
+greyscale23.ppm: greyscale
+	./greyscale > greyscale23.ppm
+
+greyscale34.ppm: greyscale
+	./greyscale h=40 v=30 hb=400 vb=300 c=127 > greyscale34.ppm
 
 clean:
-	rm greyscale.out
-	rm greyscale.ppm
+	rm greyscale
+	rm greyscale23.ppm
+	rm greyscale34.ppm

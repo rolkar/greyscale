@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /* This program generates 256 patches in a 16x16 grid.  The patches
    has the values 0,1,2,3,...,255.
@@ -30,16 +32,78 @@ static void border(int i, int j, int do_nl) {
   }
 }
 
-int main(int argc, char *argv)
+static void usage()
 {
+  fprintf(stderr,
+	  "usage: greyscale "
+	  "[h=HSIZE] "
+	  "[v=VSIZE] "
+	  "[hb=HBORDERSIZE] "
+	  "[vb=VBORDERSIZE] "
+	  "[s=SPACINGSIZE] "
+	  "[c=BORDERCOLOR]\n");
+  exit(1);
+}
+
+static void arg(char *str)
+{
+  char *valpos = strchr(str, '=');
+  int keysize;
+
+  if (!valpos)
+    usage();
+
+  keysize = valpos - str;
+
+  valpos++;
+
+#if 0
+  fprintf(stderr, "str = %s\n", str);
+  fprintf(stderr, "valpos = %s\n", valpos);
+  fprintf(stderr, "keysize = %d\n", keysize);
+#endif
+
+  if (strncmp(str,          "v", keysize) == 0)
+    v = atoi(valpos);
+  else if (strncmp(str,     "h", keysize) == 0)
+    h = atoi(valpos);
+  else if (strncmp(str,    "vb", keysize) == 0)
+    vborder = atoi(valpos);
+  else if (strncmp(str,    "hb", keysize) == 0)
+    hborder = atoi(valpos);
+  else if (strncmp(str,     "s", keysize) == 0)
+    spacing = atoi(valpos);
+  else if (strncmp(str,     "c", keysize) == 0)
+    border_color = atoi(valpos);
+  else
+    usage();
+}
+
+int main(int argc, char *argv[])
+{
+  int i, ii, j, jj;
+
+  for (i=1; i<argc; i++) {
+    arg(argv[i]);
+  }
+
   int width = 2*hborder + 16*h;
   int height = 2*vborder + 16*v;
 
-  int i, ii, j, jj;
+#if 0
+  fprintf(stderr, "h       = %d\n", h);
+  fprintf(stderr, "v       = %d\n", v);
+  fprintf(stderr, "hborder = %d\n", hborder);
+  fprintf(stderr, "vborder = %d\n", vborder);
+  fprintf(stderr, "spacing = %d\n", spacing);
+  fprintf(stderr, "bcolor  = %d\n", border_color);
+  fprintf(stderr, "width   = %d\n", width);
+  fprintf(stderr, "height  = %d\n", height);
+#endif
 
   printf("P2\n %d %d\n255\n", width, height);
 
-  border(hborder, width, 1); /* Upper */
+  border(vborder, width, 1); /* Upper */
 
   for (i = 0; i < 16; i++) {
     border(spacing, width, 1); /* horizontal spacings */
